@@ -1,7 +1,5 @@
 function Z = DrawPoints(C, B, D, F, Q, V, E, G, K, A, M, N, paramets, visual)
 if visual == 1
-    %输入：挖掘机各关键点在世界坐标系下的坐标
-    %绘制挖掘机工作装置
     %%
     plot([B(1)/1000,C(1)/1000],[B(2)/1000,C(2)/1000],'k','LineWidth',1);
     hold on

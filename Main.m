@@ -1,7 +1,12 @@
-% motion planning主函数
 %%
 clear all
 close all
+addpath('Planner');
+addpath('Visual');
+%%
+Start = [7.8, -4.2, pi/2];
+End = [2, -1, -pi/2];
+Display = 0;
 %%
 Configure.params = parameters();
 Configure.params.phi_0 = 0;
@@ -15,10 +20,9 @@ Configure.dhparams = double(subs(dhparams_sym,[a2,a3,a4],[Configure.params_c.l_C
 
 %%
 ObstPoint = [];
-ObstPoint(1,:) = [5, -2]; %左上角(横，纵)
-ObstPoint(2,:) = [6, -3]; %右下角(横，纵)
-figure(1);
-rectangle('Position',[ObstPoint(1,1),ObstPoint(2,2),ObstPoint(2,1)-ObstPoint(1,1),ObstPoint(1,2)-ObstPoint(2,2)],'EdgeColor','r');
+ObstPoint(1,:) = [5, -2];
+ObstPoint(2,:) = [6, -3];
+Configure.ObstPoint = ObstPoint;
 %%
 ObstList = []; % Obstacle point list
 for i = -0.5 : 0.1 : 10
@@ -59,13 +63,13 @@ ObstLine(end+1,:) = tLine;
 %%
 % Configure.MAX_STEER = 0.6; % [rad] maximum steering angle
 
-load MAP_lambda1.mat
-load MAP_lambda2.mat
-load MAP_lambda3.mat
-Configure.Drive_COST = 100;
-Configure.MAP_lambda1 = MAP_lambda1;
-Configure.MAP_lambda2 = MAP_lambda2;
-Configure.MAP_lambda3 = MAP_lambda3;
+% load MAP_lambda1.mat
+% load MAP_lambda2.mat
+% load MAP_lambda3.mat
+Configure.Drive_COST = 50;
+% Configure.MAP_lambda1 = MAP_lambda1;
+% Configure.MAP_lambda2 = MAP_lambda2;
+% Configure.MAP_lambda3 = MAP_lambda3;
 
 %Map
 load('MAP_03.mat');
@@ -73,12 +77,11 @@ Configure.Map = MAP;
 Configure.TolLen = 0.4; %距离误差
 Configure.TolAng = 0.6*0.1*pi; %角度误差
 Configure.AStarStyle = 2;   %A*在二维上运行还是三维上运行
-Configure.ANGLE_COST = 1;
+Configure.ANGLE_COST = 0.2;
 Configure.AStar_COST = 1;
 Configure.Node_COST = 1;
 
 % ObstList and ObstLine
-Configure.ObstList = ObstList;
 Configure.ObstLine = ObstLine;
 Configure.ObstPoint = ObstPoint;
 
@@ -108,26 +111,22 @@ Configure.STEER_CHANGE_COST = 0; % steer angle change penalty cost
 Configure.STEER_COST = 0; % steer angle change penalty cost
 Configure.H_COST = 10; % Heuristic cost
 
-% Start = [8.23, -4.2, pi/2-0.3];
-Start = [7.8, -4.2, pi/2];
-End = [2, -1, -pi/2];
 Configure.End = End;
 
-% 使用完整约束有障碍情况下用A*搜索的最短路径最为hybrid A*的启发值
-% ObstMap = GridAStar(Configure,End);
-% save ObstMap_03 ObstMap
-load ObstMap_03.mat
-% m=mesh(ObstMap);
-% m.FaceLighting = 'phong';
-% axis equal;
+if ~isempty('ObstMap_03.mat')
+    load ObstMap_03.mat
+else
+    ObstMap = GridAStar(Configure,End);
+    save ObstMap_03 ObstMap
+end
 Configure.ObstMap = ObstMap;
 
-% cla %  从当前坐标区删除包含可见句柄的所有图形对象。
-Mapnodes = VanAStar(Start,End,Configure);
+nodes = VanAStar(Start,End,Display,Configure);
 save nodes nodes
-% TODO:增加演示动画
-if isempty(x)
+
+if isempty(nodes)
     disp("Failed to find path!")
 else
-    VehicleAnimation(x,y,th,Configure,Vehicle)
+    figure(3)
+    Animation(nodes,Configure,3);
 end

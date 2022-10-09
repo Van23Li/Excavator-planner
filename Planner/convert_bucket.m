@@ -1,12 +1,6 @@
 function [C, B, D, F, Q, V, E, G, K, A, M, N] = convert_bucket(phi_0, phi_1, phi_2, phi_3, params_c)
-%输入：关节空间的参数
-%输出：挖掘机上各关键点在世界坐标系下的坐标
 %%
 q_3 = pi + phi_3;
-% 参数赋值
-% cc = params_c.cc;
-% bb = params_c.bb;
-% aa = params_c.aa;
 cc = 0;
 bb = 0;
 aa = 0;
@@ -30,10 +24,10 @@ l_FN = params_c.l_FN;
 D_FQN = params_c.D_FQN;
 l_NQ = params_c.l_NQ;
 l_MN = params_c.l_MN;
-%% 回转平台的运动分析
+%%
 R_z0phi0 = [cos(phi_0), -sin(phi_0), 0;...
     sin(phi_0),  cos(phi_0), 0;...
-    0      ,        0,          1]; % 转台相对于z0轴的旋转矩阵
+    0      ,        0,          1];
 xyz_0C = [0; cc; bb];
 XYZ_C = R_z0phi0 * xyz_0C + [0; 0; aa];
 C = XYZ_C(2:3);
@@ -44,7 +38,7 @@ A = XYZ_A(2:3);
 
 R_x1phi1 = [1, 0, 0;...
     0,  cos(phi_1), -sin(phi_1);...
-    0,   sin(phi_1), cos(phi_1)]; % 动臂上各铰接点绕x1轴的旋转矩阵
+    0,   sin(phi_1), cos(phi_1)];
 xyz_1B = [0; l_BC*cos(D_BCF); l_BC*sin(D_BCF)];
 XYZ_B = R_z0phi0 * (xyz_0C + R_x1phi1 * xyz_1B) + [0; 0; aa];
 B = XYZ_B(2:3);
@@ -59,7 +53,7 @@ F = XYZ_F(2:3);
 
 R_x2phi2 = [1, 0, 0;...
     0,  cos(phi_2), -sin(phi_2);...
-    0,   sin(phi_2), cos(phi_2)]; % 斗杆上各铰接点绕x2轴的旋转矩阵
+    0,   sin(phi_2), cos(phi_2)];
 xyz_2Q = [0; l_FQ; 0];
 XYZ_Q = R_z0phi0 * (xyz_0C + R_x1phi1 * (xyz_1F + R_x2phi2 * xyz_2Q)) + [0; 0; aa];
 Q = XYZ_Q(2:3);
@@ -93,7 +87,7 @@ G = XYZ_G(2:3);
 
 R_x3phi3 = [1, 0, 0;...
     0,  cos(phi_3), -sin(phi_3);...
-    0,   sin(phi_3), cos(phi_3)]; % 铲斗上各铰接点绕x3轴的旋转矩阵
+    0,   sin(phi_3), cos(phi_3)];
 xyz_3V = [0; l_3; 0];
 XYZ_V = R_z0phi0 * (xyz_0C + R_x1phi1 * (xyz_1F + R_x2phi2 * (xyz_2Q + R_x3phi3 * xyz_3V))) + [0; 0; aa];
 V = XYZ_V(2:3);

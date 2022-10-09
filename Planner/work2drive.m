@@ -1,5 +1,4 @@
 function [lambda_1, lambda_2, lambda_3] = work2drive(q_1, q_2, q_3, params_c)
-%关节空间转化到驱动空间
 %%
 q_2 = pi + q_2;
 q_3 = pi + q_3;

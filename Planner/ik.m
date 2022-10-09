@@ -1,13 +1,9 @@
 function [results, flag, result_num] = ik(dhparams, x, y, phi,params)
-%输入：[x, y, phi]-Tool坐标系的坐标和角度
-%给定Tool位置及方向，计算逆解
 %%
-%转化为腕部坐标系坐标和角度
 x = x-dhparams(4,1)*cos(phi);
 y = y-dhparams(4,1)*sin(phi);
 phi = phi;
 
-%设定参数
 flag = 1;
 result_num = 0;
 l1 = dhparams(2,1);
@@ -45,21 +41,7 @@ else
         results(2,:) = [theta1_n, theta2_n, theta3_n];
     end
     
-    %放缩至-pi到pi
     results = wrapToPi(results);
-    %     for i = 1:size(results,1)
-    %         for j = 1:size(results,2)
-    %             while results(i,j)>2*pi
-    %                 results(i,j) = results(i,j)-2*pi;
-    %             end
-    %             while results(i,j)<0
-    %                 results(i,j) = results(i,j)+2*pi;
-    %             end
-    %             if results(i,j)>pi
-    %                 results(i,j) = results(i,j) - 2*pi;
-    %             end
-    %         end
-    %     end
 end
 
 end
